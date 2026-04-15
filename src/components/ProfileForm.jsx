@@ -1,4 +1,5 @@
 import { useState } from "react"
+import DisplayProfile from "./DisplayProfile"
 
 const ProfileForm = () => {
 
@@ -10,27 +11,31 @@ const ProfileForm = () => {
         email: "",
         role: "",
         bio: "",
-        subscribed: ""
+        subscribed: false
     }
 
     // set up state variable using an object to keep track of various inputs
     const [formData, setFormData] = useState(defaultFormData)
 
     // set up display data to track the user input we want to capture and display on submit
-    const[displayData, setDisplayData] = useState(null)
+    // const[displayData, setDisplayData] = useState(null)
+
+    // set up display data for our external profile component
+    const [displayProfile, setDisplayProfile] = useState({
+        name: "N/A",
+        age: "N/A",
+        location: "N/A",
+        email: "N/A",
+        role: "N/A",
+        bio: "N/A",
+        subscribed: false
+    })
 
     // set up a function to happen on change to any field to record the input
     const handleChange = (event) => {
 
         // destructure the event to get the name, value & checked property
-        let {name, value, checked} = event.target
-
-        // determine whether it's the checkbox that was changed
-        if (name === "subscribed") {
-
-                // if so, let value equal the checked property
-                value = checked
-            }
+        const {name, value, checked, type} = event.target
 
         // create an object to track the updated informatio the user enters
         const updatedFormData = {
@@ -41,8 +46,9 @@ const ProfileForm = () => {
             
             // add the new data. 
             // *note* that the bracket notation [] evaluates what we pass into the brackets and allows us to use it as a key, which we need here because we need a one-word value for the property
-            // this is the same as [event.target.name]: event.target.value
-            [name]: value
+            // this is the same as [event.target.name]: event.target.value/checkbox
+            // this says if type = checkbox, use checked value else use value
+            [name]: type === "checkbox" ? checked : value
         }
 
         // set our form data to the updated data using our set function
@@ -55,13 +61,20 @@ const ProfileForm = () => {
         // prevent the page from refreshing on submit
         event.preventDefault()
 
-        // alert the user of the name, age, location, email or role fields are left empty
-        if ((formData.name === "") || (formData.age === 0) || (formData.location === "") || (formData.email === "") || (formData.role === "")) {
-            alert("You have not filled out the entire form!")
+        // // alert the user of the name, age, location, email or role fields are left empty
+        // if ((formData.name === "") || (formData.age === 0) || (formData.location === "") || (formData.email === "") || (formData.role === "")) {
+        //     alert("You have not filled out the entire form!")
+        // }
+        const {name, age, email, location, role} = formData
+
+        if (name && age && email && location && role) {
+            setDisplayProfile(formData)
+        } else {
+            alert("All fields must be filled out")
         }
 
         // set our displayData equal to our formData at the time of submission
-        setDisplayData(formData)
+        // setDisplayData(formData)
 
         // clear our form inputs after submit
         setFormData(defaultFormData)
@@ -145,7 +158,7 @@ const ProfileForm = () => {
         </form>
 
         {/* Display area */}
-        {displayData && (
+        {/* {displayData && (
             <>
                 <h3>Name: {displayData.name}</h3>
                 <p>Age: {displayData.age}</p>
@@ -155,7 +168,8 @@ const ProfileForm = () => {
                 <p>Bio: {displayData.bio}</p>
                 {displayData.subscribed ? <p>{displayData.name} is subscribed</p> :<p>{displayData.name} is NOT subscribed</p>}
             </>
-        )}
+        )} */}
+        <DisplayProfile {...displayProfile}/>
     </>
   )
 }
