@@ -14,6 +14,11 @@ const MessageForm = () => {
         // stop the page from reloading
         event.preventDefault()
 
+        // alert the user of the name, age, location, email or role fields are left empty
+        if (message === "") {
+            alert("You have not entered a message!")
+        }
+
         // set display message to whatever the value of message is at submit
         setDisplayMessage(message)
 
